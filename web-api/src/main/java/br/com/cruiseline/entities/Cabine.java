@@ -11,12 +11,12 @@ public class Cabine {
   private int numeroIdentificador;
   private TipoCabine tipo;
   private double preco;
-  private Localizacao local;
+  private LocalDeck local;
   private int capacidade;
   
   public Cabine() {}
 
-  public Cabine(int numeroIdentificador, TipoCabine tipo, double preco, Localizacao local,
+  public Cabine(int numeroIdentificador, TipoCabine tipo, double preco, LocalDeck local,
       int capacidade) {
     super();
     this.numeroIdentificador = numeroIdentificador;
@@ -50,11 +50,11 @@ public class Cabine {
     this.preco = preco;
   }
 
-  public Localizacao getLocal() {
+  public LocalDeck getLocal() {
     return local;
   }
 
-  public void setLocal(Localizacao local) {
+  public void setLocal(LocalDeck local) {
     this.local = local;
   }
 

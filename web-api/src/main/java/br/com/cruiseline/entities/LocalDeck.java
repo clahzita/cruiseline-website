@@ -7,6 +7,6 @@ package br.com.cruiseline.entities;
  * @author clah
  *
  */
-public enum Localizacao {
+public enum LocalDeck {
   POPA, CENTRAL, PROA;
 }

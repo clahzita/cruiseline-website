@@ -8,7 +8,7 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import org.springframework.stereotype.Component;
 import br.com.cruiseline.entities.Pacote;
-import br.com.cruisiline.exceptions.BDException;
+import br.com.cruiseline.exceptions.BDException;
 
 /**
  * @author clah

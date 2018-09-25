@@ -12,7 +12,7 @@ import java.util.List;
 public class Reserva {
   private Usuario usuario;
   private Pacote pacote;
-  private List<Cabine> cabines;
+  private List<Cabine> cabinesSelecionadas;
   private int numeroPassageiros;
   private double custoTotal;
   

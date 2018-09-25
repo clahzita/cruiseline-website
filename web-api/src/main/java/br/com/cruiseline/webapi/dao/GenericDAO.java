@@ -4,7 +4,7 @@
 package br.com.cruiseline.webapi.dao;
 
 import java.util.List;
-import br.com.cruisiline.exceptions.BDException;
+import br.com.cruiseline.exceptions.BDException;
 
 /**
  * @author clah
