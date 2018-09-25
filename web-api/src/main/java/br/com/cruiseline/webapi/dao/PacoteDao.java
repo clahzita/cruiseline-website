@@ -1,20 +1,27 @@
 /**
  * 
  */
-package br.com.cruisiline.dao;
+package br.com.cruiseline.webapi.dao;
 
 import java.util.ArrayList;
 import java.util.List;
-import br.com.cruisiline.entities.Pacote;
+import javax.annotation.PostConstruct;
+import org.springframework.stereotype.Component;
+import br.com.cruiseline.entities.Pacote;
 import br.com.cruisiline.exceptions.BDException;
-import br.com.devmedia.entity.Nota;
 
 /**
  * @author clah
  *
  */
+@Component
 public class PacoteDao implements GenericDAO<Pacote> {
   List<Pacote> banco = new ArrayList<>();
+  
+  @PostConstruct
+  public void iniciar() {
+    
+  }
   
   @Override
   public void salvar(Pacote novo) {
@@ -32,7 +39,7 @@ public class PacoteDao implements GenericDAO<Pacote> {
         return;
       }
     }
-    throw new BDException("Id não encontrado!");
+    throw new BDException("Id nï¿½o encontrado!");
     
   }
 
@@ -45,7 +52,7 @@ public class PacoteDao implements GenericDAO<Pacote> {
         return;
       }
     }
-    throw new BDException("Id não encontrado!");
+    throw new BDException("Id nï¿½o encontrado!");
   }
 
   @Override
@@ -63,11 +70,6 @@ public class PacoteDao implements GenericDAO<Pacote> {
     }
     throw new BDException("Nenhum pacote com esse ID encontrada!");
    
-  }
-  
-  private void carregarTodosPacotes() {
-    //TODO carregar de um arquivo os pacotes existentes no sistema ou
-    //chamar serviço que crie os objetos para carregar.
   }
   
 

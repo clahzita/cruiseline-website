@@ -1,7 +1,7 @@
 /**
  * 
  */
-package br.com.cruisiline.dao;
+package br.com.cruiseline.webapi.dao;
 
 import java.util.List;
 import br.com.cruisiline.exceptions.BDException;
