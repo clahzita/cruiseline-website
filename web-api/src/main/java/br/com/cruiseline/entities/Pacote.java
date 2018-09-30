@@ -5,15 +5,6 @@ public class Pacote {
   private int id;
   private String nome;
   
-  public Pacote() { }
-  
-  public Pacote(int capacidade, int id, String nome) {
-    super();
-    this.capacidade = capacidade;
-    this.id = id;
-    this.nome = nome;
-  }
-
   public int getCapacidade() {
     return capacidade;
   }

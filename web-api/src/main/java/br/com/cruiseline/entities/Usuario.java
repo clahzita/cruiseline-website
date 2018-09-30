@@ -1,13 +1,20 @@
 package br.com.cruiseline.entities;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 public class Usuario {
+  private AtomicInteger sequence = new AtomicInteger(0);
   private String login;
   private int id;
 
-  public Usuario(String login, int id) {
+  public Usuario() {
+    this.id = sequence.getAndIncrement();
+  }
+  
+  public Usuario(String login) {
     super();
     this.login = login;
-    this.id = id;
+    this.id = sequence.getAndIncrement();
   }
   public String getLogin() {
     return login;
@@ -17,9 +24,6 @@ public class Usuario {
   }
   public int getId() {
     return id;
-  }
-  public void setId(int id) {
-    this.id = id;
   }
   
   

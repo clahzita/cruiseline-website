@@ -5,6 +5,7 @@ package br.com.cruiseline.webapi.dao;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import javax.annotation.PostConstruct;
 import org.springframework.stereotype.Component;
 import br.com.cruiseline.entities.Pacote;
@@ -16,15 +17,20 @@ import br.com.cruiseline.exceptions.BDException;
  */
 @Component
 public class PacoteDao implements GenericDAO<Pacote> {
-  List<Pacote> banco = new ArrayList<>();
+  private AtomicInteger sequence = new AtomicInteger(0);
+  private List<Pacote> banco = new ArrayList<>();
   
   @PostConstruct
   public void iniciar() {
-    
+    Pacote pacote = new Pacote();
+    pacote.setCapacidade(10);
+    pacote.setNome("Noronha");
+    banco.add(pacote);
   }
   
   @Override
   public void salvar(Pacote novo) {
+    novo.setId(sequence.getAndIncrement());
     banco.add(novo);
     
   }
