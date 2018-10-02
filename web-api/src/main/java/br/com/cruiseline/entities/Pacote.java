@@ -1,9 +1,18 @@
 package br.com.cruiseline.entities;
 
 public class Pacote {
+  private int maximo;
   private int capacidade;
   private int id;
   private String nome;
+  
+  public int getMaximo() {
+    return maximo;
+  }
+  
+  public void setMaximo(int maximo) {
+    this.maximo = maximo;
+  }
   
   public int getCapacidade() {
     return capacidade;

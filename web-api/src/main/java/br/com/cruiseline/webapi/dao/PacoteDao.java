@@ -7,9 +7,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import javax.annotation.PostConstruct;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 import br.com.cruiseline.entities.Pacote;
-import br.com.cruiseline.exceptions.BDException;
+import br.com.cruiseline.webapi.exceptions.BDException;
 
 /**
  * @author clah
@@ -23,9 +24,10 @@ public class PacoteDao implements GenericDAO<Pacote> {
   @PostConstruct
   public void iniciar() {
     Pacote pacote = new Pacote();
+    pacote.setMaximo(10);
     pacote.setCapacidade(10);
     pacote.setNome("Noronha");
-    banco.add(pacote);
+    this.salvar(pacote);
   }
   
   @Override
@@ -39,8 +41,7 @@ public class PacoteDao implements GenericDAO<Pacote> {
   public void alterar(Pacote alterado, int id) throws BDException {
     for (Pacote pacote : banco) {
       if(pacote.getId() == id) {
-        pacote.setCapacidade(alterado.getCapacidade());
-        pacote.setNome(alterado.getNome());
+        BeanUtils.copyProperties(alterado, pacote);
         System.out.println("Editado com sucesso!");
         return;
       }

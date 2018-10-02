@@ -11,7 +11,7 @@
 <body>
 	<div class="panel panel-default">
 		<div class="panel-heading">
-			<strong>Pacotes</strong>
+			<strong>Reservas</strong>
 		</div>
 		<div class="panel-body">
 			<div class="table-responsive">
@@ -19,26 +19,30 @@
 					<thead>
 						<tr>
 							<th>ID</th>
-							<th>Nome</th>
-							<th>Capacidade</th>
+							<th>Usuario</th>
+							<th>Nome do Pacote</th>
+							<th>Nº Passageiros</th>
 							<th></th>
 						</tr>
 					</thead>
 					<tbody>
-						<tr th:each="pacote : ${pacotes}">
-							<td th:text="${pacote.id}"></td>
-							<td th:text="${pacote.nome}"></td>
-							<td th:text="${pacote.capacidade}"></td>
+						<tr th:each="reserva : ${reservas}">
+							<td th:text="${reserva.id}"></td>
+							<td th:text="${reserva.usuario.login}"></td>
+							<td th:text="${reserva.pacote.nome}"></td>
+							<td th:text="${reserva.numeroPassageiros}"></td>
 							<td>
 								<div class="btn-group pull-right">
-							   		<a class="btn btn-sm btn-primary" th:href="@{'/add/' + ${pacote.id}}" >Reservar</a>
-							   		<a class="btn btn-sm btn-secondary" th:href="@{'/list'}" >Ver Reserva()s)</a>
+									<a class="delete btn btn-sm btn-danger" th:href="@{/delete/{id}(id=${reserva.id})}">Excluir</a>
 							   </div>
 							</td>
 						</tr>
 					</tbody>
 				</table>
 			</div>
+		</div>
+		<div class="panel-footer">
+			<a type="button" class="btn btn-sm btn-dark" th:href="@{/}" >Voltar para Pacotes</a>
 		</div>
 	</div>
 </body>

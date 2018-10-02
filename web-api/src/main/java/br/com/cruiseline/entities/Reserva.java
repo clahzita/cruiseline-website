@@ -66,7 +66,7 @@ public class Reserva {
   }
   
   public double getCustoTotal() {
-    calcularCustoTotal();
+    //calcularCustoTotal();
     return custoTotal;
   }
   

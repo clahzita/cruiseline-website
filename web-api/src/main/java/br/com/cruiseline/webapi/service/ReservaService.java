@@ -3,42 +3,43 @@ package br.com.cruiseline.webapi.service;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import br.com.cruiseline.entities.Pacote;
 import br.com.cruiseline.entities.Reserva;
-import br.com.cruiseline.exceptions.BDException;
+import br.com.cruiseline.webapi.dao.PacoteDao;
 import br.com.cruiseline.webapi.dao.ReservaDAO;
+import br.com.cruiseline.webapi.exceptions.BDException;
+import br.com.cruiseline.webapi.exceptions.BusinessException;
 
 @Service
 public class ReservaService {
-  
+
   @Autowired
-  private ReservaDAO repositorio;
-  
-  
+  private ReservaDAO repositorioReserva;
+
+  private PacoteService pacoteService;
+
+
   public List<Reserva> buscarTodos() {
-      return repositorio.listarTodos();
+    return repositorioReserva.listarTodos();
   }
-  
-  public Reserva encontrarUm(int id) {
-      try {
-        return repositorio.pegarPeloId(id);
-      } catch (BDException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
-      }
-      return null;
+
+  public Reserva encontrarUm(int id) throws BDException {
+
+    return repositorioReserva.pegarPeloId(id);
+
   }
-  
-  public void salvar(Reserva reserva) {
-      repositorio.salvar(reserva);
-      //TODO diminuir capacidade do pacote.
+
+  public void salvar(Reserva reserva) throws BDException, BusinessException {    
+    repositorioReserva.salvar(reserva);
   }
-  
-  public void deletar(int id) {
-      try {
-        repositorio.remover(id);
-      } catch (BDException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
-      }
+
+  public void editar(Reserva reserva, int id) throws BDException {
+    repositorioReserva.alterar(reserva, id);
+
+  }
+
+  public void deletar(int idReserva) throws BusinessException, BDException {
+    repositorioReserva.remover(idReserva);
+    
   }
 }

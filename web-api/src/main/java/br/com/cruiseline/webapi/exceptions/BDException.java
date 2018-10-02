@@ -1,7 +1,7 @@
 /**
  * 
  */
-package br.com.cruiseline.exceptions;
+package br.com.cruiseline.webapi.exceptions;
 
 /**
  * @author clah

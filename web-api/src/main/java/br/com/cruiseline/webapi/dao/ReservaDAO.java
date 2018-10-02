@@ -4,9 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import javax.annotation.PostConstruct;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 import br.com.cruiseline.entities.Reserva;
-import br.com.cruiseline.exceptions.BDException;
+import br.com.cruiseline.webapi.exceptions.BDException;
 
 @Component
 public class ReservaDAO implements GenericDAO<Reserva> {
@@ -23,43 +24,55 @@ public class ReservaDAO implements GenericDAO<Reserva> {
   public void salvar(Reserva novo) {
     novo.setId(sequence.getAndIncrement());
     banco.add(novo);
-    
+       
   }
 
   @Override
   public void alterar(Reserva reservaAlterada, int id) throws BDException {
     for (Reserva reserva : banco) {
       if(reserva.getId() == id) {
-        reserva.setUsuario(reservaAlterada.getUsuario());
-        reserva.setPacote(reservaAlterada.getPacote());
-        reserva.setNumeroPassageiros(reservaAlterada.getNumeroPassageiros());
-        reserva.setCustoTotal(reservaAlterada.getCustoTotal());
-        reserva.setCabinesSelecionadas(reservaAlterada.getCabinesSelecionadas());
+        BeanUtils.copyProperties(reservaAlterada, reserva);
+//        reserva.setUsuario(reservaAlterada.getUsuario());
+//        reserva.setPacote(reservaAlterada.getPacote());
+//        reserva.setNumeroPassageiros(reservaAlterada.getNumeroPassageiros());
+//        reserva.setCustoTotal(reservaAlterada.getCustoTotal());
+//        reserva.setCabinesSelecionadas(reservaAlterada.getCabinesSelecionadas());
         
-        System.out.println("Editado com sucesso!");
+        System.out.println("Reserva editada com sucesso!");
         return;
       }
     }
-    throw new BDException("Id n�o encontrado!");
+    throw new BDException("Id da reserva nao encontrado!");
     
   }
 
   @Override
   public void remover(int id) throws BDException {
-    // TODO Auto-generated method stub
+    for (Reserva reserva : banco) {
+      if(reserva.getId() == id) {
+        banco.remove(reserva);
+        System.out.println("Reserva removida com sucesso!");
+        return;
+      }
+    }
+    throw new BDException("Id da reserva nao encontrado!");
     
   }
 
   @Override
   public List<Reserva> listarTodos() {
-    // TODO Auto-generated method stub
-    return null;
+    return banco;
   }
 
   @Override
   public Reserva pegarPeloId(int id) throws BDException {
-    // TODO Auto-generated method stub
-    return null;
+    for (Reserva reserva : banco) {
+      if(reserva.getId() == id) {
+        System.out.println("Reserva encontrada!");
+        return reserva;
+      }
+    }
+    throw new BDException("Nenhuma reserva com esse ID encontrada!");
   }
 
 }
