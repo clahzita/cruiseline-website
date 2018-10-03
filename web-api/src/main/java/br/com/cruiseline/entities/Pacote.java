@@ -1,11 +1,19 @@
 package br.com.cruiseline.entities;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Pacote {
   private int maximo;
   private int capacidade;
   private int id;
   private String nome;
+  private int precoMinimo;
+  private List<Cabine> navio;
   
+  public Pacote() {
+    this.navio = new ArrayList<>();
+  }
   public int getMaximo() {
     return maximo;
   }
@@ -32,6 +40,22 @@ public class Pacote {
   public void setNome(String nome) {
     this.nome = nome;
   }
+
+  public int getPrecoMinimo() {
+    return precoMinimo;
+  }
+
+  public void setPrecoMinimo(int i) {
+    this.precoMinimo = i;
+  }
+  
+  public List<Cabine> getNavio() {
+    return navio;
+  }
+  public void setNavio(List<Cabine> navio) {
+    this.navio = navio;
+  }
+  
   
   
 }

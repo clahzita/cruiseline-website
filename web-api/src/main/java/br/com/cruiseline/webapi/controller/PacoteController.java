@@ -29,6 +29,8 @@ public class PacoteController {
 
     ModelAndView mv = new ModelAndView("/pacote");
     mv.addObject("pacotes", pacoteService.listarTodos());
+    
+    //pacoteService.listarPorPreco();
 
     return mv;
   }
@@ -55,7 +57,9 @@ public class PacoteController {
 
     Reserva reservaBanco = reservaService.encontrarUm(id);
     
-    pacoteService.diminuirCapacidade(reservaBanco.getPacote().getId());
+    
+    int idPacote = reservaBanco.getPacote().getId();
+    pacoteService.diminuirCapacidade(idPacote);
     
     BeanUtils.copyProperties(reserva, reservaBanco,"pacote");
     
@@ -63,26 +67,26 @@ public class PacoteController {
     
     reservaService.editar(reservaBanco, id);
 
-    return "redirect:/list";
+    return "redirect:/list/"+idPacote;
   }
 
-  @GetMapping("/list")
-  public ModelAndView allReservas() {
+  @GetMapping("/list/{id}")
+  public ModelAndView allReservas(@PathVariable("id") int id) throws BusinessException {
 
     ModelAndView mv = new ModelAndView("/reservas");
-    mv.addObject("reservas", reservaService.buscarTodos());
+    mv.addObject("reservas", reservaService.buscarTodasReservasPorPacote(id));
 
     return mv;
   }
   
   @GetMapping("/delete/{id}")
-  public ModelAndView delete(@PathVariable("id") int id) throws BusinessException, BDException {
+  public String delete(@PathVariable("id") int id) throws BusinessException, BDException {
          
       int idPacote = reservaService.encontrarUm(id).getPacote().getId();
       reservaService.deletar(id);
       pacoteService.aumentarCapacidade(idPacote);
       
-      return allReservas();
+      return "redirect:/";
   }
 
 

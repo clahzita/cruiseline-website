@@ -10,20 +10,25 @@ package br.com.cruiseline.entities;
 public class Cabine {
   private int numeroIdentificador;
   private TipoCabine tipo;
-  private double preco;
   private LocalDeck local;
   private int capacidade;
+  private boolean disponivel;
+  private double preco;
   
-  public Cabine() {}
-
-  public Cabine(int numeroIdentificador, TipoCabine tipo, double preco, LocalDeck local,
-      int capacidade) {
+  public Cabine() {
+    this.disponivel=true;
+  
+  }
+  
+  public Cabine(int numeroIdentificador, TipoCabine tipo, LocalDeck local, int capacidade,
+      double preco) {
     super();
     this.numeroIdentificador = numeroIdentificador;
     this.tipo = tipo;
-    this.preco = preco;
     this.local = local;
     this.capacidade = capacidade;
+    this.disponivel = true;
+    this.preco = preco;
   }
 
   public int getNumeroIdentificador() {
@@ -42,14 +47,6 @@ public class Cabine {
     this.tipo = tipo;
   }
 
-  public double getPreco() {
-    return preco;
-  }
-
-  public void setPreco(double preco) {
-    this.preco = preco;
-  }
-
   public LocalDeck getLocal() {
     return local;
   }
@@ -64,6 +61,22 @@ public class Cabine {
 
   public void setCapacidade(int capacidade) {
     this.capacidade = capacidade;
-  }  
+  }
+
+  public boolean isDisponivel() {
+    return disponivel;
+  }
+
+  public void setDisponivel(boolean disponivel) {
+    this.disponivel = disponivel;
+  }
+
+  public double getPreco() {
+    return preco;
+  }
+
+  public void setPreco(double preco) {
+    this.preco = preco;
+  }
   
 }
