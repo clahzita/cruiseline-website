@@ -34,6 +34,7 @@ public class PacoteController {
     ModelAndView mv = new ModelAndView("/pacote");
     mv.addObject("pacotes", pacoteService.listarTodos());
 
+    
     //pacoteService.listarPorPreco();
 
     return mv;
@@ -41,9 +42,11 @@ public class PacoteController {
 
   @GetMapping("/add/{id}")
   public ModelAndView add(@PathVariable("id") Integer idPacote) throws BDException, BusinessException {
-    //organizando exibição de cabines disponiveis no pacote
-    cabineService.organizarCabinesPorTipo(idPacote);
     
+    //organizando exibição de cabines disponiveis no pacote
+    //cabineService.organizarCabinesPorTipo(idPacote);
+    cabineService.organizarCabinesPorTipoExecutor(idPacote);
+    //cabineService.organizarCabinesPorTipoExecutorSchedule(idPacote);
     
     ModelAndView mv = new ModelAndView("/reserva");
     
@@ -52,10 +55,12 @@ public class PacoteController {
 
     Reserva reserva = new Reserva();
     reserva.setPacote(pacote);
+    Usuario usuario = new Usuario();
+    reserva.setUsuario(usuario);
     reservaService.salvar(reserva);
     mv.addObject("reserva", reserva);
     
-    mv.addObject("usuario",new Usuario());   
+    mv.addObject("usuario",reserva.getUsuario());   
     
     
     
@@ -68,9 +73,11 @@ public class PacoteController {
   }
 
   @PostMapping("/salvar/{id}")
-  public String save(Reserva reserva, Usuario usuario, @PathVariable("id") Integer idReserva) throws BDException, BusinessException {
+  public String save(Reserva reserva, @PathVariable("id") Integer idReserva) throws BDException, BusinessException {
 
-    System.out.println("usuario"+usuario.getId());
+    System.out.println("usuario reserva login: "+reserva.getUsuario().getLogin());
+    System.out.println("usuario reserva id: "+reserva.getUsuario().getId());
+    
     Reserva reservaBanco = reservaService.encontrarUm(idReserva);
 
     
@@ -78,7 +85,7 @@ public class PacoteController {
 
     BeanUtils.copyProperties(reserva, reservaBanco,"pacote");
 
-    reservaBanco.setUsuario(usuario);
+    reservaBanco.setUsuario(reserva.getUsuario());
 
     reservaService.editar(reservaBanco, idReserva);
     

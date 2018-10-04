@@ -7,7 +7,7 @@ package br.com.cruiseline.entities;
  * @author clah
  *
  */
-public class Cabine {
+public class Cabine implements Comparable<Cabine>{
   private Integer id;
   private TipoCabine tipo;
   private LocalDeck local;
@@ -77,6 +77,11 @@ public class Cabine {
 
   public void setPreco(double preco) {
     this.preco = preco;
+  }
+
+  @Override
+  public int compareTo(Cabine cabine) {
+    return this.getId().compareTo(cabine.getId());
   }
   
 }
