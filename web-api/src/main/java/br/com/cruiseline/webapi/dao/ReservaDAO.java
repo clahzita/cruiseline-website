@@ -8,6 +8,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 import br.com.cruiseline.entities.Reserva;
 import br.com.cruiseline.webapi.exceptions.BDException;
+import br.com.cruiseline.webapi.exceptions.BusinessException;
 
 @Component
 public class ReservaDAO implements GenericDAO<Reserva> {
@@ -32,12 +33,6 @@ public class ReservaDAO implements GenericDAO<Reserva> {
     for (Reserva reserva : banco) {
       if(reserva.getId() == id) {
         BeanUtils.copyProperties(reservaAlterada, reserva);
-//        reserva.setUsuario(reservaAlterada.getUsuario());
-//        reserva.setPacote(reservaAlterada.getPacote());
-//        reserva.setNumeroPassageiros(reservaAlterada.getNumeroPassageiros());
-//        reserva.setCustoTotal(reservaAlterada.getCustoTotal());
-//        reserva.setCabinesSelecionadas(reservaAlterada.getCabinesSelecionadas());
-        
         System.out.println("Reserva editada com sucesso!");
         return;
       }
@@ -73,6 +68,23 @@ public class ReservaDAO implements GenericDAO<Reserva> {
       }
     }
     throw new BDException("Nenhuma reserva com esse ID encontrada!");
+  }
+
+  public List<Reserva> listarTodosPorPacote(int idPacote) throws BusinessException {
+    List<Reserva> listaPorPacote = new ArrayList<>();
+    
+    for (Reserva reserva : banco) {
+      if(reserva.getPacote().getId() == idPacote) {
+        listaPorPacote.add(reserva);
+      }
+    }
+    
+    if(listaPorPacote.isEmpty()) {
+      throw new BusinessException("Não existe reservas cadastradas para esse pacote.");
+    }
+    
+    return listaPorPacote;
+    
   }
 
 }

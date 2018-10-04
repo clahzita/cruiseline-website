@@ -8,7 +8,7 @@ package br.com.cruiseline.entities;
  *
  */
 public class Cabine {
-  private int numeroIdentificador;
+  private Integer id;
   private TipoCabine tipo;
   private LocalDeck local;
   private int capacidade;
@@ -23,7 +23,7 @@ public class Cabine {
   public Cabine(int numeroIdentificador, TipoCabine tipo, LocalDeck local, int capacidade,
       double preco) {
     super();
-    this.numeroIdentificador = numeroIdentificador;
+    this.id = numeroIdentificador;
     this.tipo = tipo;
     this.local = local;
     this.capacidade = capacidade;
@@ -31,12 +31,12 @@ public class Cabine {
     this.preco = preco;
   }
 
-  public int getNumeroIdentificador() {
-    return numeroIdentificador;
+  public Integer getId() {
+    return id;
   }
-
-  public void setNumeroIdentificador(int numeroIdentificador) {
-    this.numeroIdentificador = numeroIdentificador;
+  
+  public void setId(Integer id) {
+    this.id = id;
   }
 
   public TipoCabine getTipo() {

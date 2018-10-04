@@ -1,44 +1,121 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
 <head>
-	<meta charset="UTF-8" />
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-	<meta name="viewport" content="width=device-width" />
-	<title>Reserva de Pacote</title>
-	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"></link>
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<meta charset="UTF-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width" />
+<title>Reserva de Pacote</title>
+<link
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+	rel="stylesheet"></link>
+<script
+	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>
 <body>
 	<div class="panel panel-default">
 		<div class="panel-heading">
-			<strong>Reserva de Pacote</strong>
+			<strong>Reserva de Pacote</strong> <br>
+			<h3 th:text="${pacote.nome}"></h3>
 		</div>
+		<div></div>
 		<div class="panel-body">
-			<form class="form-horizontal" th:object="${reserva}" th:action="@{'/salvar/'+${reserva.id}}" method="POST" style="margin: 10px">
+			<form class="form-horizontal" th:object="${reserva}"
+				th:action="@{'/salvar/'+${reserva.id}}" method="POST"
+				style="margin: 10px">
 				<div class="form-group">
- 					<fieldset>
-						
+					<fieldset>
+
 						<div class="form-group row">
-						    <div class="col-md-1">
-                                <label>Id da Reserva</label>
-                                <div th:if="*{id} != null">
-                                	<input type="text" class="form-control input-sm" id="id" th:field="*{id}" readOnly="readonly"/>
-                                </div>						        
-						    </div>
-						 </div>
-						<div class="form-group row">                                                          
-							<div class="col-md-4">
-							    <label>Usuario</label>
-							    <input type="text" class="form-control input-sm" th:field="${usuario.login}" autofocus="autofocus" placeholder="Informe o login do usuario" maxlength="50"/>
+							<div class="col-md-1">
+								<label>Id da Reserva</label>
+								<div th:if="*{id} != null">
+									<input type="text" class="form-control input-sm" id="id"
+										th:field="*{id}" readOnly="readonly" />
+								</div>
 							</div>
 						</div>
 						<div class="form-group row">
 							<div class="col-md-4">
-								<label>Numero Passageiros</label> 
-								<input type="text" class="form-control input-sm" th:field="*{numeroPassageiros}" maxlength="150" placeholder="Informe o numero de passageiros"/>
+								<label>Usuario</label> <input type="text"
+									class="form-control input-sm" th:field="${usuario.login}"
+									autofocus="autofocus" placeholder="Informe o login do usuario"
+									maxlength="50" />
 							</div>
 						</div>
-												
+						<div class="form-group row">
+							<div class="col-md-4">
+								<label>Numero Passageiros</label> <input type="text"
+									class="form-control input-sm" th:field="*{numeroPassageiros}"
+									maxlength="150" placeholder="Informe o numero de passageiros" />
+							</div>
+						</div>
+						<div class="form-group">
+
+							<div class="col-md-12">
+								<label>Cabines Disponíveis</label>
+							</div>
+
+							<div class="col-md-12">
+								<div class="col-md-2">
+									<label>Studio</label>
+								</div>
+								<div class="col-md-4">
+									<select class="form-control" th:field="*{cabineStudio}"
+										id="dropCabineStudio">
+										<option value="0">Selecione Cabine</option>
+										<option th:each="cabine : ${cabinesDisponiveisStudio}"
+												th:value="${cabine.id}" 
+												th:text="${cabine.id}"></option>
+									</select>
+								</div>
+
+							</div>
+							
+							<div class="col-md-12">
+								<div class="col-md-2">
+									<label>Balcony</label>
+								</div>
+								<div class="col-md-4">
+									<select class="form-control" th:field="*{cabineBalcony}"
+										id="dropCabineStudio">
+										<option value="0">Selecione Cabine</option>
+										<option th:each="cabine : ${cabinesDisponiveisBalcony}"
+											th:value="${cabine.id}" th:text="${cabine.id}"></option>
+									</select>
+								</div>
+
+							</div>
+							
+							<div class="col-md-12">
+								<div class="col-md-2">
+									<label>OceanView</label>
+								</div>
+								<div class="col-md-4">
+									<select class="form-control" th:field="*{cabineOceanView}"
+										id="dropCabineStudio">
+										<option value="0">Selecione Cabine</option>
+										<option th:each="cabine : ${cabinesDisponiveisOceanView}"
+											th:value="${cabine.id}" th:text="${cabine.id}"></option>
+									</select>
+								</div>
+
+							</div>
+							
+							<div class="col-md-12">
+								<div class="col-md-2">
+									<label>Inside</label>
+								</div>
+								<div class="col-md-4">
+									<select class="form-control" th:field="*{cabineInside}"
+										id="dropCabineStudio">
+										<option value="0">Selecione Cabine</option>
+										<option th:each="cabine : ${cabinesDisponiveisInside}"
+											th:value="${cabine.id}" th:text="${cabine.id}"></option>
+									</select>
+								</div>
+
+							</div>
 					</fieldset>
 				</div>
 				<div class="form-group row">

@@ -27,29 +27,39 @@ public class OrganizadorCabines implements Runnable {
 
   @Override
   public void run() {
-    for (int i = inicioBusca; i < fimBusca; i++) {
+    for (int i = inicioBusca; i <= fimBusca; i++) {
       //seleciona as cabines disponiveis
       if(todasCabines.get(i).isDisponivel()) {
         //organiza por tipo
+        System.out.println(i);
         this.organizarCabinePorTipo(todasCabines.get(i));
       }      
     }
   }
 
   private void organizarCabinePorTipo(Cabine cabine) {
-    
+
     switch (cabine.getTipo()) {
       case STUDIO:
-        cabinesStudio.add(cabine);
+        synchronized (this) {
+          cabinesStudio.add(cabine);
+        }        
         break;
       case INSIDE:
-        cabinesInside.add(cabine);
+        synchronized (this) {
+          cabinesInside.add(cabine);
+        }        
         break;
       case BALCONY:
-        cabinesBalcony.add(cabine);
+        synchronized (this) {
+          cabinesBalcony.add(cabine);
+        }
+
         break;
       case OCEANVIEW:
-        cabinesOceanView.add(cabine);
+        synchronized (this) {
+          cabinesOceanView.add(cabine);
+        }
         break;
       default:
         break;

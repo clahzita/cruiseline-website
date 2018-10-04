@@ -13,20 +13,21 @@ public class PacoteService {
   
   @Autowired
   private PacoteDao repositorio;
+
   
   public List<Pacote> listarTodos() {
       return repositorio.listarTodos();
   }
 
   public Pacote find(Integer id) throws BDException {
-    // TODO Auto-generated method stub
     return repositorio.pegarPeloId(id);
   }
   
-  public void diminuirCapacidade(int idPacote) throws BDException, BusinessException {
+  public int diminuirCapacidade(int idPacote) throws BDException, BusinessException {
     Pacote pacote = repositorio.pegarPeloId(idPacote);
+    int capacidade;
     synchronized (this) {
-      int capacidade = pacote.getCapacidade();
+      capacidade = pacote.getCapacidade();
       capacidade--;
       if(capacidade < 0) {
         throw new BusinessException("Capacidade não pode ser menor que zero");
@@ -34,12 +35,15 @@ public class PacoteService {
       pacote.setCapacidade(capacidade);
     }
     repositorio.alterar(pacote, idPacote);
+    
+    return capacidade;
   }
   
-  public void aumentarCapacidade(int idPacote) throws BusinessException, BDException {
+  public int aumentarCapacidade(int idPacote) throws BusinessException, BDException {
     Pacote pacote = repositorio.pegarPeloId(idPacote);
+    int capacidade;
     synchronized (this) {
-      int capacidade = pacote.getCapacidade();
+      capacidade = pacote.getCapacidade();
       capacidade++;
       if(capacidade > pacote.getMaximo()) {
         throw new BusinessException("Capacidade não pode ser maior que a quantidade máxima de pacotes");
@@ -47,6 +51,8 @@ public class PacoteService {
       pacote.setCapacidade(capacidade);
     }
     repositorio.alterar(pacote, idPacote);
+    
+    return capacidade;
   }
 
   public void alterar(Pacote pacote, int id) throws BDException {
@@ -57,5 +63,6 @@ public class PacoteService {
   public Pacote pegarPeloId(int pacoteId) throws BDException {
     return repositorio.pegarPeloId(pacoteId);
   }
+
   
 }

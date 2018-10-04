@@ -21,6 +21,7 @@
 							<th>ID</th>
 							<th>Nome</th>
 							<th>Capacidade</th>
+							<th>Preço a partir de</th>
 							<th></th>
 						</tr>
 					</thead>
@@ -29,10 +30,11 @@
 							<td th:text="${pacote.id}"></td>
 							<td th:text="${pacote.nome}"></td>
 							<td th:text="${pacote.capacidade}"></td>
+							<td th:text="${pacote.precoMinimo}"></td>
 							<td>
 								<div class="btn-group pull-right">
 							   		<a class="btn btn-sm btn-primary" th:href="@{'/add/' + ${pacote.id}}" >Reservar</a>
-							   		<a class="btn btn-sm btn-secondary" th:href="@{'/list'}" >Ver Reserva()s)</a>
+							   		<a class="btn btn-sm btn-dark" th:href="@{'/list/' + ${pacote.id}}" >Ver Reserva(s)</a>
 							   </div>
 							</td>
 						</tr>

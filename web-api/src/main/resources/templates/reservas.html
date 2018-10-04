@@ -21,7 +21,7 @@
 							<th>ID</th>
 							<th>Usuario</th>
 							<th>Nome do Pacote</th>
-							<th>Nº Passageiros</th>
+							<th>Cabines Selecionadas</th>
 							<th></th>
 						</tr>
 					</thead>
@@ -30,7 +30,10 @@
 							<td th:text="${reserva.id}"></td>
 							<td th:text="${reserva.usuario.login}"></td>
 							<td th:text="${reserva.pacote.nome}"></td>
-							<td th:text="${reserva.numeroPassageiros}"></td>
+							<td th:text="'Studio - '+ ${reserva.cabineStudio} + '; ' 
+										+'Inside - '+${reserva.cabineInside} + '; '
+										+'Balcony - '+${reserva.cabineBalcony} + '; '
+										+'OceanView -' +${reserva.cabineOceanView}"></td>
 							<td>
 								<div class="btn-group pull-right">
 									<a class="delete btn btn-sm btn-danger" th:href="@{/delete/{id}(id=${reserva.id})}">Excluir</a>

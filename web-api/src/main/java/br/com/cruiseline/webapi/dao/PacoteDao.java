@@ -9,7 +9,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 import javax.annotation.PostConstruct;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
+import br.com.cruiseline.entities.Cabine;
+import br.com.cruiseline.entities.LocalDeck;
 import br.com.cruiseline.entities.Pacote;
+import br.com.cruiseline.entities.TipoCabine;
 import br.com.cruiseline.webapi.exceptions.BDException;
 
 /**
@@ -23,13 +26,63 @@ public class PacoteDao implements GenericDAO<Pacote> {
   
   @PostConstruct
   public void iniciar() {
-    Pacote pacote = new Pacote();
-    pacote.setMaximo(10);
-    pacote.setCapacidade(10);
-    pacote.setNome("Noronha");
-    this.salvar(pacote);
+    Pacote pacote1 = new Pacote();
+    pacote1.setMaximo(2);
+    pacote1.setCapacidade(2);
+    pacote1.setNome("Noronha");
+    pacote1.setNavio(preencherCabines());
+    pacote1.setPrecoMinimo(1500);
+    this.salvar(pacote1);
+    
+    Pacote pacote2 = new Pacote();
+    pacote2.setMaximo(10);
+    pacote2.setCapacidade(10);
+    pacote2.setNome("Europa");
+    pacote2.setNavio(preencherCabines());
+    pacote2.setPrecoMinimo(1000);
+    this.salvar(pacote2);
+    
+    Pacote pacote3 = new Pacote();
+    pacote3.setMaximo(10);
+    pacote3.setCapacidade(10);
+    pacote3.setNome("Caribe");
+    pacote3.setNavio(preencherCabines());
+    pacote3.setPrecoMinimo(1800);
+    this.salvar(pacote3);
   }
   
+  private List<Cabine> preencherCabines() {
+    List<Cabine> cabines = new ArrayList<>();
+    
+    for(int i = 0; i < 25;i++) {
+      Cabine cabine = new Cabine(i+100, TipoCabine.STUDIO, LocalDeck.CENTRAL, 4, TipoCabine.STUDIO.getValor());
+      cabines.add(cabine);
+    }
+    
+    for(int i = 0; i < 40;i++) {
+      Cabine cabine = new Cabine(i+200, TipoCabine.INSIDE, LocalDeck.CENTRAL, 4, TipoCabine.INSIDE.getValor());
+      cabines.add(cabine);
+    }
+    
+    for(int i = 0; i < 25;i++) {
+      Cabine cabine = new Cabine(300+i, TipoCabine.BALCONY, LocalDeck.POPA, 4, TipoCabine.BALCONY.getValor());
+      cabines.add(cabine);
+    }
+    
+    for(int i = 0; i < 140;i++) {
+      Cabine cabine = new Cabine(400+i, TipoCabine.OCEANVIEW, LocalDeck.PROA, 4, TipoCabine.OCEANVIEW.getValor());
+      cabines.add(cabine);
+    }
+    
+    for(int i = 40; i < 120;i++) {
+      Cabine cabine = new Cabine(200+i, TipoCabine.INSIDE, LocalDeck.POPA, 4, TipoCabine.INSIDE.getValor());
+      cabines.add(cabine);
+    }
+    
+    System.out.println("tamanho da lista de cabines Navio:" + cabines.size());
+    return cabines;
+  }
+
   @Override
   public void salvar(Pacote novo) {
     novo.setId(sequence.getAndIncrement());

@@ -4,7 +4,6 @@
 package br.com.cruiseline.entities;
 
 import java.util.List;
-import javax.validation.constraints.NotNull;
 
 /**
  * @author clah
@@ -20,11 +19,16 @@ public class Reserva {
   
   private List<Cabine> cabinesSelecionadas;  
   
+  private Integer cabineStudio;
+  private Integer cabineBalcony;
+  private Integer cabineOceanView;
+  private Integer cabineInside;
+  
   private int numeroPassageiros;
   
   private double custoTotal;
   
-
+  
   public int getId() {
     return id;
   }
@@ -57,6 +61,38 @@ public class Reserva {
     this.cabinesSelecionadas = cabinesSelecionadas;
   }
   
+  public Integer getCabineStudio() {
+    return cabineStudio;
+  }
+
+  public void setCabineStudio(Integer cabineStudio) {
+    this.cabineStudio = cabineStudio;
+  }
+
+  public Integer getCabineBalcony() {
+    return cabineBalcony;
+  }
+
+  public void setCabineBalcony(Integer cabineBalcony) {
+    this.cabineBalcony = cabineBalcony;
+  }
+
+  public Integer getCabineOceanView() {
+    return cabineOceanView;
+  }
+
+  public void setCabineOceanView(Integer cabineOceanView) {
+    this.cabineOceanView = cabineOceanView;
+  }
+
+  public Integer getCabineInside() {
+    return cabineInside;
+  }
+
+  public void setCabineInside(Integer cabineInside) {
+    this.cabineInside = cabineInside;
+  }
+
   public int getNumeroPassageiros() {
     return numeroPassageiros;
   }

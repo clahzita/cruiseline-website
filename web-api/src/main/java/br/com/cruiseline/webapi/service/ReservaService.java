@@ -3,9 +3,7 @@ package br.com.cruiseline.webapi.service;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import br.com.cruiseline.entities.Pacote;
 import br.com.cruiseline.entities.Reserva;
-import br.com.cruiseline.webapi.dao.PacoteDao;
 import br.com.cruiseline.webapi.dao.ReservaDAO;
 import br.com.cruiseline.webapi.exceptions.BDException;
 import br.com.cruiseline.webapi.exceptions.BusinessException;
@@ -16,8 +14,8 @@ public class ReservaService {
   @Autowired
   private ReservaDAO repositorioReserva;
 
-  private PacoteService pacoteService;
-
+  @Autowired
+  private CabineService cabineService;
 
   public List<Reserva> buscarTodos() {
     return repositorioReserva.listarTodos();
@@ -31,15 +29,23 @@ public class ReservaService {
 
   public void salvar(Reserva reserva) throws BDException, BusinessException {    
     repositorioReserva.salvar(reserva);
+    
   }
 
   public void editar(Reserva reserva, int id) throws BDException {
     repositorioReserva.alterar(reserva, id);
+    cabineService.marcarCabineComoIndisponivel(reserva, reserva.getPacote().getId());
 
   }
 
   public void deletar(int idReserva) throws BusinessException, BDException {
+    Reserva reserva = repositorioReserva.pegarPeloId(idReserva);
+    cabineService.marcarCabineComoDisponivel(reserva, reserva.getPacote().getId());
     repositorioReserva.remover(idReserva);
     
+  }
+  
+  public List<Reserva> buscarTodasReservasPorPacote(int id) throws BusinessException {
+    return repositorioReserva.listarTodosPorPacote(id);
   }
 }
