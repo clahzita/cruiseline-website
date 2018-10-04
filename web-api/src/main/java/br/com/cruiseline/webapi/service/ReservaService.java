@@ -4,6 +4,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import br.com.cruiseline.entities.Reserva;
+import br.com.cruiseline.entities.TipoCabine;
 import br.com.cruiseline.webapi.dao.ReservaDAO;
 import br.com.cruiseline.webapi.exceptions.BDException;
 import br.com.cruiseline.webapi.exceptions.BusinessException;
@@ -36,10 +37,29 @@ public class ReservaService {
   }
 
   public void editar(Reserva reserva, int id) throws BDException, BusinessException {
-    repositorioReserva.alterar(reserva, id);
     pacoteService.diminuirCapacidade(reserva.getPacote().getId());
+    contabilizarPrecoTotal(reserva);
     cabineService.marcarCabineComoIndisponivel(reserva, reserva.getPacote().getId());
+    repositorioReserva.alterar(reserva, id);
 
+  }
+
+  private void contabilizarPrecoTotal(Reserva reserva) {
+   if(reserva.getCabineBalcony()!=0) {
+     reserva.setCustoTotal(reserva.getCustoTotal()+TipoCabine.BALCONY.getValor());
+   }
+    
+   if(reserva.getCabineInside()!=0) {
+     reserva.setCustoTotal(reserva.getCustoTotal()+TipoCabine.INSIDE.getValor());
+   }
+   
+   if(reserva.getCabineOceanView()!=0) {
+     reserva.setCustoTotal(reserva.getCustoTotal()+TipoCabine.OCEANVIEW.getValor());
+   }
+   
+   if(reserva.getCabineStudio()!=0) {
+     reserva.setCustoTotal(reserva.getCustoTotal()+TipoCabine.STUDIO.getValor());
+   }
   }
 
   public void deletar(int idReserva) throws BusinessException, BDException {
