@@ -16,6 +16,9 @@ public class ReservaService {
 
   @Autowired
   private CabineService cabineService;
+  
+  @Autowired
+  private PacoteService pacoteService;
 
   public List<Reserva> buscarTodos() {
     return repositorioReserva.listarTodos();
@@ -32,15 +35,18 @@ public class ReservaService {
     
   }
 
-  public void editar(Reserva reserva, int id) throws BDException {
+  public void editar(Reserva reserva, int id) throws BDException, BusinessException {
     repositorioReserva.alterar(reserva, id);
+    pacoteService.diminuirCapacidade(reserva.getPacote().getId());
     cabineService.marcarCabineComoIndisponivel(reserva, reserva.getPacote().getId());
 
   }
 
   public void deletar(int idReserva) throws BusinessException, BDException {
     Reserva reserva = repositorioReserva.pegarPeloId(idReserva);
+    
     cabineService.marcarCabineComoDisponivel(reserva, reserva.getPacote().getId());
+    pacoteService.aumentarCapacidade(reserva.getPacote().getId());
     repositorioReserva.remover(idReserva);
     
   }

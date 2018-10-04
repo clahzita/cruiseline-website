@@ -70,11 +70,11 @@ public class PacoteController {
   @PostMapping("/salvar/{id}")
   public String save(Reserva reserva, Usuario usuario, @PathVariable("id") Integer idReserva) throws BDException, BusinessException {
 
+    System.out.println("usuario"+usuario.getId());
     Reserva reservaBanco = reservaService.encontrarUm(idReserva);
 
     
     int idPacote = reservaBanco.getPacote().getId();
-    pacoteService.diminuirCapacidade(idPacote);
 
     BeanUtils.copyProperties(reserva, reservaBanco,"pacote");
 
@@ -101,8 +101,7 @@ public class PacoteController {
 
     int idPacote = reservaService.encontrarUm(idReserva).getPacote().getId();
     reservaService.deletar(idReserva);
-    pacoteService.aumentarCapacidade(idPacote);
-
+   
     return "redirect:/";
   }
 

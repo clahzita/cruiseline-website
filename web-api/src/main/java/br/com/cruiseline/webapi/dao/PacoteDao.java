@@ -27,24 +27,24 @@ public class PacoteDao implements GenericDAO<Pacote> {
   @PostConstruct
   public void iniciar() {
     Pacote pacote1 = new Pacote();
-    pacote1.setMaximo(2);
-    pacote1.setCapacidade(2);
+    pacote1.setMaximo(310);
+    pacote1.setCapacidade(310);
     pacote1.setNome("Noronha");
     pacote1.setNavio(preencherCabines());
     pacote1.setPrecoMinimo(1500);
     this.salvar(pacote1);
     
     Pacote pacote2 = new Pacote();
-    pacote2.setMaximo(10);
-    pacote2.setCapacidade(10);
+    pacote2.setMaximo(310);
+    pacote2.setCapacidade(310);
     pacote2.setNome("Europa");
     pacote2.setNavio(preencherCabines());
     pacote2.setPrecoMinimo(1000);
     this.salvar(pacote2);
     
     Pacote pacote3 = new Pacote();
-    pacote3.setMaximo(10);
-    pacote3.setCapacidade(10);
+    pacote3.setMaximo(310);
+    pacote3.setCapacidade(310);
     pacote3.setNome("Caribe");
     pacote3.setNavio(preencherCabines());
     pacote3.setPrecoMinimo(1800);

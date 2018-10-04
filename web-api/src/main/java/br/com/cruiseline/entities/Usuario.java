@@ -3,7 +3,7 @@ package br.com.cruiseline.entities;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Usuario {
-  private AtomicInteger sequence = new AtomicInteger(0);
+  private static AtomicInteger sequence = new AtomicInteger(0);
   private String login;
   private int id;
 
@@ -12,7 +12,6 @@ public class Usuario {
   }
   
   public Usuario(String login) {
-    super();
     this.login = login;
     this.id = sequence.getAndIncrement();
   }
