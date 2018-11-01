@@ -31,14 +31,15 @@ public class OrganizadorCabines implements Runnable {
       //seleciona as cabines disponiveis
       if(todasCabines.get(i).isDisponivel()) {
         //organiza por tipo
-        System.out.println(i);
         this.organizarCabinePorTipo(todasCabines.get(i));
       }      
     }
   }
 
   private void organizarCabinePorTipo(Cabine cabine) {
-
+    if(!cabine.isDisponivel()) {
+      return;
+    }
     switch (cabine.getTipo()) {
       case STUDIO:
         synchronized (this) {
@@ -64,7 +65,6 @@ public class OrganizadorCabines implements Runnable {
       default:
         break;
     }
-
 
   }
 

@@ -22,7 +22,6 @@ public class Cabine implements Comparable<Cabine>{
   
   public Cabine(int numeroIdentificador, TipoCabine tipo, LocalDeck local, int capacidade,
       double preco) {
-    super();
     this.id = numeroIdentificador;
     this.tipo = tipo;
     this.local = local;

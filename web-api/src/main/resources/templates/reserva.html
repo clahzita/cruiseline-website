@@ -66,21 +66,6 @@
 
 							<div class="col-md-12">
 								<div class="col-md-2">
-									<label>Studio</label>
-								</div>
-								<div class="col-md-4">
-									<select class="form-control" th:field="*{cabineStudio}"
-										id="dropCabineStudio">
-										<option value="0">Selecione Cabine</option>
-										<option th:each="cabine : ${cabinesDisponiveisStudio}"
-											th:value="${cabine.id}" th:text="${cabine.id}"></option>
-									</select>
-								</div>
-
-							</div>
-
-							<div class="col-md-12">
-								<div class="col-md-2">
 									<label>Balcony</label>
 								</div>
 								<div class="col-md-4">
@@ -88,7 +73,24 @@
 										id="dropCabineStudio">
 										<option value="0">Selecione Cabine</option>
 										<option th:each="cabine : ${cabinesDisponiveisBalcony}"
-											th:value="${cabine.id}" th:text="${cabine.id}"></option>
+											th:value="${cabine.id == null ? -1 : cabine.id}" 
+											th:text="${cabine.id == null ? -1 : cabine.id}"></option>
+									</select>
+								</div>
+
+							</div>
+							
+							<div class="col-md-12">
+								<div class="col-md-2">
+									<label>Inside</label>
+								</div>
+								<div class="col-md-4">
+									<select class="form-control" th:field="*{cabineInside}"
+										id="dropCabineStudio">
+										<option value="0">Selecione Cabine</option>
+										<option th:each="cabine : ${cabinesDisponiveisInside}"
+											th:value="${cabine.id == null ? -1 : cabine.id}" 
+											th:text="${cabine.id == null ? -1 : cabine.id}"></option>
 									</select>
 								</div>
 
@@ -103,26 +105,30 @@
 										id="dropCabineStudio">
 										<option value="0">Selecione Cabine</option>
 										<option th:each="cabine : ${cabinesDisponiveisOceanView}"
-											th:value="${cabine.id}" th:text="${cabine.id}"></option>
+											th:value="${cabine.id == null ? -1 : cabine.id}" 
+											th:text="${cabine.id == null ? -1 : cabine.id}"></option>
 									</select>
 								</div>
 
 							</div>
-
+							
 							<div class="col-md-12">
 								<div class="col-md-2">
-									<label>Inside</label>
+									<label>Studio</label>
 								</div>
 								<div class="col-md-4">
-									<select class="form-control" th:field="*{cabineInside}"
+									<select class="form-control" th:field="*{cabineStudio}"
 										id="dropCabineStudio">
 										<option value="0">Selecione Cabine</option>
-										<option th:each="cabine : ${cabinesDisponiveisInside}"
-											th:value="${cabine.id}" th:text="${cabine.id}"></option>
+										<option th:each="cabine : ${cabinesDisponiveisStudio}"
+											th:value="${cabine.id == null ? -1 : cabine.id}" 
+											th:text="${cabine.id == null ? -1 : cabine.id}"></option>
 									</select>
 								</div>
 
 							</div>
+
+							
 					</fieldset>
 				</div>
 				<div class="form-group row">

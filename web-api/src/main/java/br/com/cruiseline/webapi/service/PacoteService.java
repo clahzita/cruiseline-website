@@ -10,46 +10,48 @@ import br.com.cruiseline.webapi.exceptions.BusinessException;
 
 @Service
 public class PacoteService {
-  
+
   @Autowired
   private PacoteDao repositorio;
 
-  
+
   public List<Pacote> listarTodos() {
-      return repositorio.listarTodos();
+    return repositorio.listarTodos();
   }
 
   public Pacote find(Integer id) throws BDException {
     return repositorio.pegarPeloId(id);
   }
-  
-  public int diminuirCapacidade(int idPacote) throws BDException, BusinessException {
+
+  public synchronized int diminuirCapacidade(int idPacote, int qtdeCabinesSelecionadas)
+      throws BDException, BusinessException {
+
     Pacote pacote = repositorio.pegarPeloId(idPacote);
     int capacidade;
-    synchronized (this) {
-      capacidade = pacote.getCapacidade();
-      capacidade--;
-      if(capacidade < 0) {
-        throw new BusinessException("Capacidade não pode ser menor que zero");
-      }
-      pacote.setCapacidade(capacidade);
+
+    capacidade = pacote.getCapacidade();
+    int capacidadeAtualizada = capacidade - qtdeCabinesSelecionadas;
+    if (capacidade < 0) {
+      throw new BusinessException("Capacidade não pode ser menor que zero.");
     }
+    pacote.setCapacidade(capacidadeAtualizada);
     repositorio.alterar(pacote, idPacote);
     
     return capacidade;
   }
   
-  public int aumentarCapacidade(int idPacote) throws BusinessException, BDException {
+  public synchronized int aumentarCapacidade(int idPacote, int qtdeCabinesExcluidas)
+      throws BDException, BusinessException {
+
     Pacote pacote = repositorio.pegarPeloId(idPacote);
     int capacidade;
-    synchronized (this) {
-      capacidade = pacote.getCapacidade();
-      capacidade++;
-      if(capacidade > pacote.getMaximo()) {
-        throw new BusinessException("Capacidade não pode ser maior que a quantidade máxima de pacotes");
-      }
-      pacote.setCapacidade(capacidade);
+
+    capacidade = pacote.getCapacidade();
+    int capacidadeAtualizada = capacidade + qtdeCabinesExcluidas;
+    if (capacidade > pacote.getMaximo()) {
+      throw new BusinessException("Capacidade não pode ser maior que o máximo.");
     }
+    pacote.setCapacidade(capacidadeAtualizada);
     repositorio.alterar(pacote, idPacote);
     
     return capacidade;
@@ -64,5 +66,5 @@ public class PacoteService {
     return repositorio.pegarPeloId(pacoteId);
   }
 
-  
+
 }

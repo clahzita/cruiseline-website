@@ -19,10 +19,10 @@ public class Reserva {
   
   private List<Cabine> cabinesSelecionadas;  
   
-  private Integer cabineStudio;
-  private Integer cabineBalcony;
-  private Integer cabineOceanView;
-  private Integer cabineInside;
+  private Integer cabineStudio = 0;
+  private Integer cabineBalcony = 0;
+  private Integer cabineOceanView = 0;
+  private Integer cabineInside = 0;
   
   private int numeroPassageiros;
   

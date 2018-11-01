@@ -3,7 +3,6 @@ package br.com.cruiseline.webapi.dao;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-import javax.annotation.PostConstruct;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 import br.com.cruiseline.entities.Reserva;
@@ -12,20 +11,25 @@ import br.com.cruiseline.webapi.exceptions.BusinessException;
 
 @Component
 public class ReservaDAO implements GenericDAO<Reserva> {
+  
+  private static ReservaDAO instance = new ReservaDAO();
+  
   private AtomicInteger sequence = new AtomicInteger(0);
-
   private List<Reserva> banco = new ArrayList<>();
   
-  @PostConstruct
-  public void iniciar() {
-   
+  private ReservaDAO() { }
+  
+  public static ReservaDAO getInstance() {
+    return instance;
   }
   
   @Override
   public void salvar(Reserva novo) {
     novo.setId(sequence.getAndIncrement());
-    banco.add(novo);
-       
+    synchronized (this) {
+      banco.add(novo);
+    }
+         
   }
 
   @Override
@@ -37,7 +41,7 @@ public class ReservaDAO implements GenericDAO<Reserva> {
         return;
       }
     }
-    throw new BDException("Id da reserva nao encontrado!");
+    throw new BDException("Falha na edição da reserva com Id ("+id+") nao encontrado.");
     
   }
 
@@ -45,12 +49,14 @@ public class ReservaDAO implements GenericDAO<Reserva> {
   public void remover(int id) throws BDException {
     for (Reserva reserva : banco) {
       if(reserva.getId() == id) {
-        banco.remove(reserva);
+        synchronized (this) {
+          banco.remove(reserva);
+        }       
         System.out.println("Reserva removida com sucesso!");
         return;
       }
     }
-    throw new BDException("Id da reserva nao encontrado!");
+    throw new BDException("Falha na remoção da reserva com Id ("+id+") nao encontrado.");
     
   }
 
@@ -67,7 +73,7 @@ public class ReservaDAO implements GenericDAO<Reserva> {
         return reserva;
       }
     }
-    throw new BDException("Nenhuma reserva com esse ID encontrada!");
+    throw new BDException("Não foi encontrada reserva com esse ID ("+id+").");
   }
 
   public List<Reserva> listarTodosPorPacote(int idPacote) throws BusinessException {

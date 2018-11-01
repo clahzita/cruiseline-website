@@ -1,5 +1,7 @@
 package br.com.cruiseline.webapi.controller;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -27,13 +29,15 @@ public class PacoteController {
 
   @Autowired
   private CabineService cabineService;
+  
+  private List<String> erros;
+
 
   @GetMapping("/")
   public ModelAndView findAll() {
 
     ModelAndView mv = new ModelAndView("/pacote");
     mv.addObject("pacotes", pacoteService.listarTodos());
-
     
     //pacoteService.listarPorPreco();
 
@@ -41,73 +45,120 @@ public class PacoteController {
   }
 
   @GetMapping("/add/{id}")
-  public ModelAndView add(@PathVariable("id") Integer idPacote) throws BDException, BusinessException {
+  public ModelAndView add(@PathVariable("id") Integer idPacote){
     
-    //organizando exibição de cabines disponiveis no pacote
-    //cabineService.organizarCabinesPorTipo(idPacote);
-    cabineService.organizarCabinesPorTipoExecutor(idPacote);
-    //cabineService.organizarCabinesPorTipoExecutorSchedule(idPacote);
+    erros = new ArrayList<>();
     
     ModelAndView mv = new ModelAndView("/reserva");
     
-    Pacote pacote = pacoteService.find(idPacote);
-    mv.addObject("pacote", pacote);
-
+    Pacote pacote = null;
     Reserva reserva = new Reserva();
-    reserva.setPacote(pacote);
-    Usuario usuario = new Usuario();
-    reserva.setUsuario(usuario);
-    reservaService.salvar(reserva);
-    mv.addObject("reserva", reserva);
+    try {
+      pacote = pacoteService.pegarPeloId(idPacote);
+      mv.addObject("pacote", pacote);
+      reserva.setPacote(pacote);
+      Usuario usuario = new Usuario();
+      reserva.setUsuario(usuario);
+      
+    } catch (BDException e) {
+      erros.add(e.getMessage());
+    }
     
-    mv.addObject("usuario",reserva.getUsuario());   
+    try {
+      reservaService.salvar(reserva);
+      mv.addObject("reserva", reserva);
+      mv.addObject("usuario",reserva.getUsuario()); 
+    } catch (BDException e1) {
+      erros.add(e1.getMessage());
+    } catch (BusinessException e1) {
+      erros.add(e1.getMessage());
+    }
     
     
+  
+    try {
+      synchronized (this) {
+      //organizando exibição de cabines disponiveis no pacote
+        //cabineService.organizarCabinesPorTipo(idPacote);
+        //cabineService.organizarCabinesPorTipoExecutor(idPacote);
+        //cabineService.organizarCabinesPorTipoExecutorSchedule(idPacote);
+        //cabineService.organizarCabinesPorTipoForkJoin(idPacote);
+        cabineService.organizarCabinesParallelStram(idPacote);
+      }
+        mv.addObject("cabinesDisponiveisBalcony", cabineService.pegarListaCabinesBalconyDisponiveis());
+        mv.addObject("cabinesDisponiveisInside", cabineService.pegarListaCabinesInsideDisponiveis());
+        mv.addObject("cabinesDisponiveisOceanView", cabineService.pegarListaCabinesOceanViewDisponiveis());
+        mv.addObject("cabinesDisponiveisStudio", cabineService.pegarListaCabinesStudioDisponiveis());
+      
+      
+    } catch (BDException e) {
+      erros.add(e.getMessage());}
+//    } catch (BusinessException e) {
+//      erros.add(e.getMessage());
+//    }
     
-    mv.addObject("cabinesDisponiveisStudio", cabineService.pegarListaCabinesStudioDisponiveis());
-    mv.addObject("cabinesDisponiveisBalcony", cabineService.pegarListaCabinesBalconyDisponiveis());
-    mv.addObject("cabinesDisponiveisOceanView", cabineService.pegarListaCabinesOceanViewDisponiveis());
-    mv.addObject("cabinesDisponiveisInside", cabineService.pegarListaCabinesInsideDisponiveis());
+    mv.addObject("erros", erros);
     
     return mv;
   }
 
   @PostMapping("/salvar/{id}")
-  public String save(Reserva reserva, @PathVariable("id") Integer idReserva) throws BDException, BusinessException {
-
+  public String save(Reserva reserva, @PathVariable("id") Integer idReserva){
+    
+    erros = new ArrayList<>();
+    
     System.out.println("usuario reserva login: "+reserva.getUsuario().getLogin());
     System.out.println("usuario reserva id: "+reserva.getUsuario().getId());
     
-    Reserva reservaBanco = reservaService.encontrarUm(idReserva);
-
+    int idPacote = -1;
+    Reserva reservaBanco;
     
-    int idPacote = reservaBanco.getPacote().getId();
-
-    BeanUtils.copyProperties(reserva, reservaBanco,"pacote");
-
-    reservaBanco.setUsuario(reserva.getUsuario());
-
-    reservaService.editar(reservaBanco, idReserva);
+    try {
+      reservaBanco = reservaService.pegarPeloId(idReserva);
+      idPacote = reservaBanco.getPacote().getId();
+      BeanUtils.copyProperties(reserva, reservaBanco,"pacote");
+      reservaBanco.setUsuario(reserva.getUsuario());
+      reservaService.alterar(reservaBanco, idReserva);
+      
+    } catch (BDException | BusinessException e) {
+      erros.add(e.getMessage());
+    }    
     
-    
+    //TODO resolver o que fazer com os erros
     
     return "redirect:/list/"+idPacote;
   }
 
   @GetMapping("/list/{id}")
-  public ModelAndView allReservas(@PathVariable("id") int idPacote) throws BusinessException {
-
+  public ModelAndView allReservas(@PathVariable("id") int idPacote) {
+    erros = new ArrayList<>();
+    
     ModelAndView mv = new ModelAndView("/reservas");
-    mv.addObject("reservas", reservaService.buscarTodasReservasPorPacote(idPacote));
+    try {
+      mv.addObject("reservas", reservaService.buscarTodasReservasPorPacote(idPacote));
+    } catch (BusinessException e) {
+      erros.add(e.getMessage());
+    }
 
+    mv.addObject("erros", erros);
+    
     return mv;
   }
 
   @GetMapping("/delete/{id}")
-  public String delete(@PathVariable("id") int idReserva) throws BusinessException, BDException {
-
-    int idPacote = reservaService.encontrarUm(idReserva).getPacote().getId();
-    reservaService.deletar(idReserva);
+  public String delete(@PathVariable("id") int idReserva){
+    erros = new ArrayList<>();
+    
+ //   int idPacote = reservaService.pegarPeloId(idReserva).getPacote().getId();
+    try {
+      reservaService.deletar(idReserva);
+    } catch (BusinessException e) {
+      erros.add(e.getMessage());
+    } catch (BDException e) {
+      erros.add(e.getMessage());
+    }
+    
+    //TODO resolver como enviar erros para tela
    
     return "redirect:/";
   }

@@ -12,12 +12,12 @@ import br.com.cruiseline.webapi.exceptions.BusinessException;
 @Service
 public class ReservaService {
 
-  @Autowired
-  private ReservaDAO repositorioReserva;
+
+  private ReservaDAO repositorioReserva = ReservaDAO.getInstance();
 
   @Autowired
   private CabineService cabineService;
-  
+
   @Autowired
   private PacoteService pacoteService;
 
@@ -25,52 +25,69 @@ public class ReservaService {
     return repositorioReserva.listarTodos();
   }
 
-  public Reserva encontrarUm(int id) throws BDException {
+  public Reserva pegarPeloId(int id) throws BDException {
 
     return repositorioReserva.pegarPeloId(id);
 
   }
 
-  public void salvar(Reserva reserva) throws BDException, BusinessException {    
+  public void salvar(Reserva reserva) throws BDException, BusinessException {
+    if(reserva == null) {
+      throw new BusinessException("Reserva null não pode ser salva no repositorio.");
+    }
     repositorioReserva.salvar(reserva);
-    
   }
 
-  public void editar(Reserva reserva, int id) throws BDException, BusinessException {
-    pacoteService.diminuirCapacidade(reserva.getPacote().getId());
+  public void alterar(Reserva reserva, int idReserva) throws BDException, BusinessException{
+
+    int todasCabinesSelecionadas = cabineService.verificarDisponibilidadeCabinesSelecionadas(reserva, idReserva);
+    pacoteService.diminuirCapacidade(reserva.getPacote().getId(),todasCabinesSelecionadas);
     contabilizarPrecoTotal(reserva);
-    cabineService.marcarCabineComoIndisponivel(reserva, reserva.getPacote().getId());
-    repositorioReserva.alterar(reserva, id);
+    try {
+      repositorioReserva.alterar(reserva, idReserva);  
+    } catch (BDException e) {
+      cabineService.marcarCabineComoDisponivel(reserva);
+      pacoteService.aumentarCapacidade(reserva.getPacote().getId(), todasCabinesSelecionadas);
+    }
+        
 
   }
 
   private void contabilizarPrecoTotal(Reserva reserva) {
-   if(reserva.getCabineBalcony()!=0) {
-     reserva.setCustoTotal(reserva.getCustoTotal()+TipoCabine.BALCONY.getValor());
-   }
-    
-   if(reserva.getCabineInside()!=0) {
-     reserva.setCustoTotal(reserva.getCustoTotal()+TipoCabine.INSIDE.getValor());
-   }
-   
-   if(reserva.getCabineOceanView()!=0) {
-     reserva.setCustoTotal(reserva.getCustoTotal()+TipoCabine.OCEANVIEW.getValor());
-   }
-   
-   if(reserva.getCabineStudio()!=0) {
-     reserva.setCustoTotal(reserva.getCustoTotal()+TipoCabine.STUDIO.getValor());
-   }
+
+    if(reserva.getCabineBalcony()!=0) {
+      reserva.setCustoTotal(reserva.getCustoTotal()+TipoCabine.BALCONY.getValor());
+    }
+
+    if(reserva.getCabineInside()!=0) {
+      reserva.setCustoTotal(reserva.getCustoTotal()+TipoCabine.INSIDE.getValor());
+    }
+
+    if(reserva.getCabineOceanView()!=0) {
+      reserva.setCustoTotal(reserva.getCustoTotal()+TipoCabine.OCEANVIEW.getValor());
+    }
+
+    if(reserva.getCabineStudio()!=0) {
+      reserva.setCustoTotal(reserva.getCustoTotal()+TipoCabine.STUDIO.getValor());
+    }
   }
 
   public void deletar(int idReserva) throws BusinessException, BDException {
     Reserva reserva = repositorioReserva.pegarPeloId(idReserva);
     
-    cabineService.marcarCabineComoDisponivel(reserva, reserva.getPacote().getId());
-    pacoteService.aumentarCapacidade(reserva.getPacote().getId());
-    repositorioReserva.remover(idReserva);
+    int todasCabinesExcluidas = cabineService.marcarCabineComoIndisponivel(reserva);
+    pacoteService.aumentarCapacidade(reserva.getPacote().getId(),todasCabinesExcluidas);
     
+    try {
+      repositorioReserva.remover(idReserva);  
+    } catch (BDException e) {
+      cabineService.marcarCabineComoDisponivel(reserva);
+      pacoteService.diminuirCapacidade(reserva.getPacote().getId(), todasCabinesExcluidas);
+    }
+    
+
   }
-  
+
   public List<Reserva> buscarTodasReservasPorPacote(int id) throws BusinessException {
     return repositorioReserva.listarTodosPorPacote(id);
   }

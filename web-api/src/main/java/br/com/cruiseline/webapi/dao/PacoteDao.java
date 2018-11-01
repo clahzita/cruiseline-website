@@ -21,8 +21,16 @@ import br.com.cruiseline.webapi.exceptions.BDException;
  */
 @Component
 public class PacoteDao implements GenericDAO<Pacote> {
+  private static PacoteDao instance = new PacoteDao();
+  
   private AtomicInteger sequence = new AtomicInteger(0);
   private List<Pacote> banco = new ArrayList<>();
+  
+  private PacoteDao() {  }
+  
+  public static PacoteDao getInstance() {
+    return instance;
+  }
   
   @PostConstruct
   public void iniciar() {
@@ -86,7 +94,9 @@ public class PacoteDao implements GenericDAO<Pacote> {
   @Override
   public void salvar(Pacote novo) {
     novo.setId(sequence.getAndIncrement());
-    banco.add(novo);
+    synchronized (this) {
+      banco.add(novo);
+    }
     
   }
 
@@ -95,11 +105,11 @@ public class PacoteDao implements GenericDAO<Pacote> {
     for (Pacote pacote : banco) {
       if(pacote.getId() == id) {
         BeanUtils.copyProperties(alterado, pacote);
-        System.out.println("Editado com sucesso!");
+        System.out.println("Pacote editado com sucesso!");
         return;
       }
     }
-    throw new BDException("Id n�o encontrado!");
+    throw new BDException("Edição não realizada, pois Id ("+id+")do pacote não encontrado!");
     
   }
 
@@ -107,12 +117,14 @@ public class PacoteDao implements GenericDAO<Pacote> {
   public void remover(int id) throws BDException {
     for (Pacote pacote : banco) {
       if(pacote.getId() == id) {
-        banco.remove(pacote);
-        System.out.println("Removido com sucesso!");
+        synchronized (pacote) {
+          banco.remove(pacote);
+        }
+        System.out.println("Pacote removido com sucesso!");
         return;
       }
     }
-    throw new BDException("Id n�o encontrado!");
+    throw new BDException("Remoçao não realizada, pois Id ("+id+")do pacote não encontrado!");
   }
 
   @Override
@@ -124,11 +136,10 @@ public class PacoteDao implements GenericDAO<Pacote> {
   public Pacote pegarPeloId(int id) throws BDException {
     for (Pacote pacote : banco) {
       if(pacote.getId() == id) {
-        System.err.println("Pacote encontrada!");
         return pacote;
       }
     }
-    throw new BDException("Nenhum pacote com esse ID encontrada!");
+    throw new BDException("Nenhum pacote com id "+id+" encontrado!");
    
   }
   
