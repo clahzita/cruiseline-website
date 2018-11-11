@@ -2,7 +2,7 @@ package br.com.cruiseline.webapi.concurrent;
 
 import java.util.List;
 import java.util.concurrent.RecursiveAction;
-import br.com.cruiseline.entities.Cabine;
+import br.com.cruiseline.webapi.entities.Cabine;
 
 public class OrganizadorCabinesForkJoin extends RecursiveAction {
 

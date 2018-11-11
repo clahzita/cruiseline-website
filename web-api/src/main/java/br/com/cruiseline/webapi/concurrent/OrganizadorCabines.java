@@ -1,7 +1,7 @@
 package br.com.cruiseline.webapi.concurrent;
 
 import java.util.List;
-import br.com.cruiseline.entities.Cabine;
+import br.com.cruiseline.webapi.entities.Cabine;
 
 public class OrganizadorCabines implements Runnable {
 

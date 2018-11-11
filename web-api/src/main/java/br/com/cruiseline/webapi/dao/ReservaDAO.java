@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
-import br.com.cruiseline.entities.Reserva;
+import br.com.cruiseline.webapi.entities.Reserva;
 import br.com.cruiseline.webapi.exceptions.BDException;
 import br.com.cruiseline.webapi.exceptions.BusinessException;
 

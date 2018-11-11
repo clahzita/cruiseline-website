@@ -9,9 +9,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
-import br.com.cruiseline.entities.Pacote;
-import br.com.cruiseline.entities.Reserva;
-import br.com.cruiseline.entities.Usuario;
+import br.com.cruiseline.webapi.entities.Pacote;
+import br.com.cruiseline.webapi.entities.Reserva;
+import br.com.cruiseline.webapi.entities.Usuario;
 import br.com.cruiseline.webapi.exceptions.BDException;
 import br.com.cruiseline.webapi.exceptions.BusinessException;
 import br.com.cruiseline.webapi.service.CabineService;
@@ -48,11 +48,10 @@ public class PacoteController {
   public ModelAndView add(@PathVariable("id") Integer idPacote){
     
     erros = new ArrayList<>();
-    
     ModelAndView mv = new ModelAndView("/reserva");
-    
     Pacote pacote = null;
     Reserva reserva = new Reserva();
+    
     try {
       pacote = pacoteService.pegarPeloId(idPacote);
       mv.addObject("pacote", pacote);
