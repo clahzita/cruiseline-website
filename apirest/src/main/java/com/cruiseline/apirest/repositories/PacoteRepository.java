@@ -3,6 +3,7 @@ package com.cruiseline.apirest.repositories;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 import com.cruiseline.apirest.models.Cabine;
 import com.cruiseline.apirest.models.LocalDeck;
@@ -62,6 +63,12 @@ public class PacoteRepository {
     banco.add(pacote);  
   }
   
+  public Cabine updateCabine(int idPacote, Cabine newCabine){
+    Cabine oldCabine = banco.get(idPacote).getNavio().get(newCabine.getId());
+    BeanUtils.copyProperties(newCabine, oldCabine);
+
+    return oldCabine;
+  }
   public Pacote findById(int id) {
     return banco.get(id);
   }
