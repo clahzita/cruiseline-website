@@ -29,7 +29,7 @@ public class PacoteController {
 
   @Autowired
   private CabineService cabineService;
-  
+
   private List<String> erros;
 
 
@@ -38,7 +38,7 @@ public class PacoteController {
 
     ModelAndView mv = new ModelAndView("/pacote");
     mv.addObject("pacotes", pacoteService.listarTodos());
-    
+
     //pacoteService.listarPorPreco();
 
     return mv;
@@ -46,23 +46,23 @@ public class PacoteController {
 
   @GetMapping("/add/{id}")
   public ModelAndView add(@PathVariable("id") Integer idPacote){
-    
+
     erros = new ArrayList<>();
     ModelAndView mv = new ModelAndView("/reserva");
     Pacote pacote = null;
     Reserva reserva = new Reserva();
-    
+
     try {
       pacote = pacoteService.pegarPeloId(idPacote);
       mv.addObject("pacote", pacote);
       reserva.setPacote(pacote);
       Usuario usuario = new Usuario();
       reserva.setUsuario(usuario);
-      
+
     } catch (BDException e) {
       erros.add(e.getMessage());
     }
-    
+
     try {
       reservaService.salvar(reserva);
       mv.addObject("reserva", reserva);
@@ -72,66 +72,114 @@ public class PacoteController {
     } catch (BusinessException e1) {
       erros.add(e1.getMessage());
     }
-    
-    
-  
-    try {
-      synchronized (this) {
-      //organizando exibição de cabines disponiveis no pacote
-        //cabineService.organizarCabinesPorTipo(idPacote);
-        //cabineService.organizarCabinesPorTipoExecutor(idPacote);
-        //cabineService.organizarCabinesPorTipoExecutorSchedule(idPacote);
-        //cabineService.organizarCabinesPorTipoForkJoin(idPacote);
-        cabineService.organizarCabinesParallelStram(idPacote);
-      }
-        mv.addObject("cabinesDisponiveisBalcony", cabineService.pegarListaCabinesBalconyDisponiveis());
-        mv.addObject("cabinesDisponiveisInside", cabineService.pegarListaCabinesInsideDisponiveis());
-        mv.addObject("cabinesDisponiveisOceanView", cabineService.pegarListaCabinesOceanViewDisponiveis());
-        mv.addObject("cabinesDisponiveisStudio", cabineService.pegarListaCabinesStudioDisponiveis());
-      
-      
-    } catch (BDException e) {
-      erros.add(e.getMessage());}
-//    } catch (BusinessException e) {
-//      erros.add(e.getMessage());
-//    }
-    
+
+
+    /*
+     * organizando exibição de cabines disponiveis no pacote
+     * 1 - Runnable
+     * 2 - Executor
+     * 3 - ExecutorSchedule
+     * 4 - Fork Join
+     * 5 - ParallelStream
+     */
+    organizarCabines(1, idPacote);
+
+    mv.addObject("cabinesDisponiveisBalcony", cabineService.pegarListaCabinesBalconyDisponiveis());
+    mv.addObject("cabinesDisponiveisInside", cabineService.pegarListaCabinesInsideDisponiveis());
+    mv.addObject("cabinesDisponiveisOceanView", cabineService.pegarListaCabinesOceanViewDisponiveis());
+    mv.addObject("cabinesDisponiveisStudio", cabineService.pegarListaCabinesStudioDisponiveis());
+
+
     mv.addObject("erros", erros);
-    
+
     return mv;
+  }
+
+  private void organizarCabines(int opcao, Integer idPacote) {
+
+    if(opcao == 1) {
+      try {
+        cabineService.organizarCabinesPorTipoRunnable(idPacote);
+      } catch (BDException | BusinessException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+    }
+
+    if(opcao == 2) {
+      try {
+        cabineService.organizarCabinesPorTipoExecutor(idPacote);
+      } catch (BDException | BusinessException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+    }
+
+    if(opcao == 3) {
+      try {
+        cabineService.organizarCabinesPorTipoExecutorSchedule(idPacote);
+      } catch (BDException | BusinessException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+    }
+
+    if (opcao == 4) {
+      try {
+        cabineService.organizarCabinesPorTipoForkJoin(idPacote);
+      } catch (BDException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+    }
+
+    if (opcao == 5) {
+
+      try {
+        
+          cabineService.organizarCabinesParallelStram(idPacote);
+        
+      } catch (BDException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+
+    }
+
+
   }
 
   @PostMapping("/salvar/{id}")
   public String save(Reserva reserva, @PathVariable("id") Integer idReserva){
-    
+
     erros = new ArrayList<>();
-    
+
     System.out.println("usuario reserva login: "+reserva.getUsuario().getLogin());
     System.out.println("usuario reserva id: "+reserva.getUsuario().getId());
-    
+
     int idPacote = -1;
     Reserva reservaBanco;
-    
+
     try {
       reservaBanco = reservaService.pegarPeloId(idReserva);
       idPacote = reservaBanco.getPacote().getId();
       BeanUtils.copyProperties(reserva, reservaBanco,"pacote");
       reservaBanco.setUsuario(reserva.getUsuario());
       reservaService.alterar(reservaBanco, idReserva);
-      
+
     } catch (BDException | BusinessException e) {
       erros.add(e.getMessage());
     }    
-    
+
     //TODO resolver o que fazer com os erros
-    
+
     return "redirect:/list/"+idPacote;
   }
 
   @GetMapping("/list/{id}")
   public ModelAndView allReservas(@PathVariable("id") int idPacote) {
     erros = new ArrayList<>();
-    
+
     ModelAndView mv = new ModelAndView("/reservas");
     try {
       mv.addObject("reservas", reservaService.buscarTodasReservasPorPacote(idPacote));
@@ -140,15 +188,15 @@ public class PacoteController {
     }
 
     mv.addObject("erros", erros);
-    
+
     return mv;
   }
 
   @GetMapping("/delete/{id}")
   public String delete(@PathVariable("id") int idReserva){
     erros = new ArrayList<>();
-    
- //   int idPacote = reservaService.pegarPeloId(idReserva).getPacote().getId();
+
+    //   int idPacote = reservaService.pegarPeloId(idReserva).getPacote().getId();
     try {
       reservaService.deletar(idReserva);
     } catch (BusinessException e) {
@@ -156,9 +204,9 @@ public class PacoteController {
     } catch (BDException e) {
       erros.add(e.getMessage());
     }
-    
+
     //TODO resolver como enviar erros para tela
-   
+
     return "redirect:/";
   }
 

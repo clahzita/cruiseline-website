@@ -3,7 +3,7 @@ package br.com.cruiseline.webapi.concurrent;
 import java.util.List;
 import br.com.cruiseline.webapi.entities.Cabine;
 
-public class OrganizadorCabines implements Runnable {
+public class OrganizadorCabinesRunnable implements Runnable {
 
   private List<Cabine> todasCabines;
   private List<Cabine> cabinesStudio;
@@ -13,7 +13,7 @@ public class OrganizadorCabines implements Runnable {
   private int inicioBusca, fimBusca;
 
 
-  public OrganizadorCabines(List<Cabine> todasCabines, List<Cabine> cabinesStudio,
+  public OrganizadorCabinesRunnable(List<Cabine> todasCabines, List<Cabine> cabinesStudio,
       List<Cabine> cabinesInside, List<Cabine> cabinesOceanView, List<Cabine> cabinesBalcony,
       int inicioBusca, int fimBusca) {
     this.todasCabines = todasCabines;

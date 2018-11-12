@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import br.com.cruiseline.webapi.concurrent.OrganizadorCabines;
+import br.com.cruiseline.webapi.concurrent.OrganizadorCabinesRunnable;
 import br.com.cruiseline.webapi.concurrent.OrganizadorCabinesForkJoin;
 import br.com.cruiseline.webapi.dao.PacoteDao;
 import br.com.cruiseline.webapi.entities.Cabine;
@@ -32,12 +32,12 @@ public class CabineService {
   private List<Cabine> cabinesInside = new ArrayList<>();
 
 
-  public void organizarCabinesPorTipo(int idPacote) throws BDException, BusinessException {
+  public void organizarCabinesPorTipoRunnable(int idPacote) throws BDException, BusinessException {
 
-    cabinesOceanView = new ArrayList<>();
-    cabinesBalcony = new ArrayList<>();
-    cabinesStudio = new ArrayList<>();
-    cabinesInside = new ArrayList<>();
+    List<Cabine> oceanView = new ArrayList<>();
+    List<Cabine> balcony = new ArrayList<>();
+    List<Cabine> studio = new ArrayList<>();
+    List<Cabine> inside = new ArrayList<>();
 
     int numberOfThreads = 20;
     final List<Thread> threads = new ArrayList<>(numberOfThreads);
@@ -64,8 +64,8 @@ public class CabineService {
         fimBusca = inicioBusca + quantidadeCabinesParaAnalise - 1;
       }
 
-      Runnable r = new OrganizadorCabines(todasCabines, cabinesStudio, cabinesInside,
-          cabinesOceanView, cabinesBalcony, inicioBusca, fimBusca);
+      Runnable r = new OrganizadorCabinesRunnable(todasCabines, studio, inside,
+          oceanView, balcony, inicioBusca, fimBusca);
       Thread t = new Thread(r);
       t.start();
       threads.add(t);
@@ -79,16 +79,25 @@ public class CabineService {
         e.printStackTrace();
       }
     }
+    
+    cabinesBalcony.addAll(balcony);
+    balcony.clear();
+    cabinesInside.addAll(inside);
+    inside.clear();
+    cabinesOceanView.addAll(oceanView);
+    oceanView.clear();
+    cabinesStudio.addAll(studio);
+    studio.clear();
 
   }
 
 
   public void organizarCabinesPorTipoExecutor(int idPacote) throws BDException, BusinessException {
 
-    cabinesOceanView = new ArrayList<>();
-    cabinesBalcony = new ArrayList<>();
-    cabinesStudio = new ArrayList<>();
-    cabinesInside = new ArrayList<>();
+    List<Cabine> oceanView = new ArrayList<>();
+    List<Cabine> balcony = new ArrayList<>();
+    List<Cabine> studio = new ArrayList<>();
+    List<Cabine> inside = new ArrayList<>();
 
     int poolOfThreads = 8;
     int numberOfTasks = 20;
@@ -119,15 +128,34 @@ public class CabineService {
 
 
 
-      Runnable r = new OrganizadorCabines(todasCabines, cabinesStudio, cabinesInside,
-          cabinesOceanView, cabinesBalcony, inicioBusca, fimBusca);
+      Runnable r = new OrganizadorCabinesRunnable(todasCabines, studio, inside,
+          oceanView, balcony, inicioBusca, fimBusca);
       executorService.execute(r);
 
     }
 
     executorService.shutdown();
-
-
+    
+    synchronized (this) {
+      cabinesBalcony.addAll(balcony);
+    }
+    balcony.clear();
+    
+    synchronized (this) {
+    cabinesInside.addAll(inside);
+    }
+    inside.clear();
+    
+    synchronized (this) {
+    cabinesOceanView.addAll(oceanView);
+    }
+    oceanView.clear();
+    
+    synchronized (this) {
+    cabinesStudio.addAll(studio);
+    }
+    studio.clear();
+    
   }
 
   public void organizarCabinesPorTipoExecutorSchedule(int idPacote)
@@ -144,7 +172,7 @@ public class CabineService {
     List<Cabine> todasCabines = repositorio.pegarPeloId(idPacote).getNavio();
 
     if (todasCabines.isEmpty() || todasCabines == null) {
-      throw new BusinessException("o navio não foi instanciado no pacote com id " + idPacote);
+      throw new BusinessException("O navio não foi instanciado no pacote com id " + idPacote);
     }
 
     // definição de quantas cabines cada thread vai analisar
@@ -167,14 +195,14 @@ public class CabineService {
         fimBusca = inicioBusca + quantidadeCabinesParaAnalise - 1;
       }
 
-
-
-      Runnable r = new OrganizadorCabines(todasCabines, cabinesStudio, cabinesInside,
+      Runnable r = new OrganizadorCabinesRunnable(todasCabines, cabinesStudio, cabinesInside,
           cabinesOceanView, cabinesBalcony, inicioBusca, fimBusca);
       fixedScheduledExecutorService.scheduleAtFixedRate(r, 0, 2, TimeUnit.SECONDS);
 
     }
-
+    
+    //TODO precisa terminar?
+    
   }
 
   public void organizarCabinesPorTipoForkJoin(Integer idPacote) throws BDException {
@@ -192,51 +220,73 @@ public class CabineService {
         cabinesInside, cabinesOceanView, cabinesBalcony);
 
     pool.invoke(task);
+    
+    //TODO devo invocar algum metodo para terminar?
 
   }
 
+  public synchronized void organizarCabinesParallelStram(Integer idPacote) throws BDException {
+    List<Cabine> todasCabines = repositorio.pegarPeloId(idPacote).getNavio();
+    
+    cabinesBalcony = todasCabines.parallelStream()
+                      .filter(cabine -> cabine.getTipo() == TipoCabine.BALCONY && cabine.isDisponivel())
+                      .collect(Collectors.toList());
+    
+    cabinesInside = todasCabines.parallelStream()
+        .filter(cabine -> cabine.getTipo() == TipoCabine.INSIDE && cabine.isDisponivel())
+        .collect(Collectors.toList());
+    
+    cabinesOceanView = todasCabines.parallelStream()
+        .filter(cabine -> cabine.getTipo() == TipoCabine.OCEANVIEW && cabine.isDisponivel())
+        .collect(Collectors.toList());
+    
+    cabinesStudio = todasCabines.parallelStream()
+        .filter(cabine -> cabine.getTipo() == TipoCabine.STUDIO && cabine.isDisponivel())
+        .collect(Collectors.toList());
 
+  }
+  
   public List<Cabine> pegarListaCabinesStudioDisponiveis() {
+    
     if (cabinesStudio.size() != 25) {
       System.err.println("ERRO cabinesStudio:" + cabinesStudio.size() + "de 25");
     } else {
-      System.out.println("studio:" + cabinesStudio.size() + "de 25");
+      System.out.println("Studio: " + cabinesStudio.size() + "de 25");
     }
 
-    // Collections.sort(cabinesStudio);
     return this.cabinesStudio;
   }
 
   public List<Cabine> pegarListaCabinesBalconyDisponiveis() {
+    
     if (cabinesBalcony.size() != 25) {
       System.err.println("ERRO: cabinesBalcony:" + cabinesBalcony.size() + "de 25");
     } else {
       System.out.println("Balcony: " + cabinesBalcony.size() + "de 25");
     }
 
-    // Collections.sort(cabinesBalcony);
     return this.cabinesBalcony;
   }
 
   public List<Cabine> pegarListaCabinesInsideDisponiveis() {
+    
     if (cabinesInside.size() != 120) {
       System.err.println("ERRO: cabinesInside:" + cabinesInside.size() + " de 120");
     } else {
-      System.out.println("Inside:" + cabinesInside.size() + " de 120");
+      System.out.println("Inside: " + cabinesInside.size() + " de 120");
     }
 
-    // Collections.sort(cabinesInside);
     return this.cabinesInside;
   }
 
   public List<Cabine> pegarListaCabinesOceanViewDisponiveis() {
+    
     if (cabinesOceanView.size() != 140) {
       System.err.println("ERRO: cabinesOceanView:" + cabinesOceanView.size() + "de 140");
     } else {
-      System.out.println("OceanView:" + cabinesOceanView.size() + "de 140");
+      System.out.println("OceanView: " + cabinesOceanView.size() + "de 140");
     }
 
-    // Collections.sort(cabinesOceanView);
     return this.cabinesOceanView;
   }
 
@@ -332,25 +382,6 @@ public class CabineService {
   }
 
 
-  public void organizarCabinesParallelStram(Integer idPacote) throws BDException {
-    List<Cabine> todasCabines = repositorio.pegarPeloId(idPacote).getNavio();
-    
-    cabinesBalcony = todasCabines.parallelStream()
-                      .filter(cabine -> cabine.getTipo() == TipoCabine.BALCONY && cabine.isDisponivel())
-                      .collect(Collectors.toList());
-    
-    cabinesInside = todasCabines.parallelStream()
-        .filter(cabine -> cabine.getTipo() == TipoCabine.INSIDE && cabine.isDisponivel())
-        .collect(Collectors.toList());
-    
-    cabinesOceanView = todasCabines.parallelStream()
-        .filter(cabine -> cabine.getTipo() == TipoCabine.OCEANVIEW && cabine.isDisponivel())
-        .collect(Collectors.toList());
-    
-    cabinesStudio = todasCabines.parallelStream()
-        .filter(cabine -> cabine.getTipo() == TipoCabine.STUDIO && cabine.isDisponivel())
-        .collect(Collectors.toList());
 
-  }
 
 }
