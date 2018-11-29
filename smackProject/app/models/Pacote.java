@@ -1,17 +1,20 @@
 package models;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Pacote {
 	
   private int id;
-  private String nome;
+  private String lugar;
   private Integer precoMinimo;
-  private List<Navio> navios;
+  private Navio navio;
+  private LocalDate partida;
+  private Integer quantidadeDias;
   
   public Pacote() {
-    this.navios = new ArrayList<>();
+    
   }
   
   public int getId() {
@@ -21,10 +24,10 @@ public class Pacote {
     this.id = id;
   }
   public String getNome() {
-    return nome;
+    return lugar;
   }
   public void setNome(String nome) {
-    this.nome = nome;
+    this.lugar = nome;
   }
 
   public int getPrecoMinimo() {
@@ -35,11 +38,11 @@ public class Pacote {
     this.precoMinimo = i;
   }
   
-  public List<Navio> getNavio() {
-    return navios;
+  public Navio getNavio() {
+    return navio;
   }
-  public void setNavio(List<Navio> navios) {
-    this.navios = navios;
+  public void setNavio(Navio navio) {
+    this.navio = navio;
   }
   
   
