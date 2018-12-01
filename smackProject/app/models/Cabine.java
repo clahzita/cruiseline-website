@@ -3,6 +3,8 @@
  */
 package models;
 
+import com.datastax.spark.connector.cql.CassandraConnector;
+
 /**
  * @author clah
  *
@@ -36,6 +38,7 @@ public class Cabine implements Comparable<Cabine>{
   
   public void setId(Integer id) {
     this.id = id;
+    
   }
 
   public TipoCabine getTipo() {
