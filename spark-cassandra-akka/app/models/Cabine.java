@@ -3,8 +3,6 @@
  */
 package models;
 
-import com.datastax.spark.connector.cql.CassandraConnector;
-
 /**
  * @author clah
  *

@@ -13,11 +13,4 @@ dist
 /.project
 /RUNNING_PID
 /.settings
-
-# Eclipse
-.project
-.classpath
-.settings
-
-# Compiled class file
-*.class
+/.target/
