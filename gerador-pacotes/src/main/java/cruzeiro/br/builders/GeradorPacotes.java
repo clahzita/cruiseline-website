@@ -16,7 +16,7 @@ public class GeradorPacotes {
 
 	public Pacote criarPacote(Integer sequencia) {
 
-		return new Pacote(getLocalPartida(sequencia), 0.0, this.criarNavio(sequencia), LocalDate.now().plusDays(sequencia));
+		return new Pacote(sequencia, getLocalPartida(sequencia), 0.0, this.criarNavio(sequencia), LocalDate.now().plusDays(sequencia%365));
 
 	}
 
@@ -40,7 +40,7 @@ public class GeradorPacotes {
 
 		for (int i = 0; i < maximoCabines; i++) {
 			TipoCabine tipo = getTipoCabine();
-			cabines.add(new Cabine(i,tipo ,true, tipo.getValor()));
+			cabines.add(new Cabine(i+1,tipo ,true, tipo.getValor()));
 		}
 
 	}
