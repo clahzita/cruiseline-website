@@ -1,14 +1,9 @@
-CREATE KEYSPACE cruzeiros WITH REPLICATION = {
-	'class': 'SimpleStrategy',
-	'replication_factor': 1
-};
-
-CREATE TYPE cruzeiros.cabine_type (
+CREATE TABLE cruzeiros.cabine (
+	numero INT,
 	tipo TEXT,
-	local TEXT,
-	capacidade INT,
 	disponivel BOOLEAN,
-	preco DOUBLE
+	preco DOUBLE,
+	PRIMARY KEY (id)
 );
 
 CREATE TYPE cruzeiros.navio_type (

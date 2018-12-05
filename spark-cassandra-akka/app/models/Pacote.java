@@ -7,9 +7,9 @@ import java.util.List;
 public class Pacote {
 	
   private int id;
-  private String lugar;
-  private Integer precoMinimo;
-  private Navio navio;
+  public String lugar;
+  public Integer precoMinimo;
+  public Navio navio;
   private LocalDate partida;
   private Integer quantidadeDias;
   
@@ -17,16 +17,28 @@ public class Pacote {
     
   }
   
-  public int getId() {
+  
+  public Pacote(int id, String lugar, Integer precoMinimo, Navio navio, LocalDate partida, Integer quantidadeDias) {
+	super();
+	this.id = id;
+	this.lugar = lugar;
+	this.precoMinimo = precoMinimo;
+	this.navio = navio;
+	this.partida = partida;
+	this.quantidadeDias = quantidadeDias;
+}
+
+
+public int getId() {
     return id;
   }
   public void setId(int id) {
     this.id = id;
   }
-  public String getNome() {
+  public String getLugar() {
     return lugar;
   }
-  public void setNome(String nome) {
+  public void setLugar(String nome) {
     this.lugar = nome;
   }
 

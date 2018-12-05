@@ -1,0 +1,23 @@
+@(pacotes:List[Pacote])
+
+@main("Lista de Todos Pacotes") {
+<h2>Todos Pacotes</h2>
+<table class="table table-striped">
+	<thead>
+		<tr>
+			<th>Lugar</th>
+			<th>Preço A Partir De</th>
+			<th></th>
+		</tr>
+	</thead>
+	<tbody>
+		@for(pacote <- pacotes){
+		<tr>
+			<td>@pacote.lugar</td>
+			<td>@pacote.precoMinimo</td>
+			<td><a href=#>Edit</a></td>
+		</tr>
+		}
+	</tbody>
+</table>
+}
