@@ -1,6 +1,5 @@
 package cruzeiro.br;
 
-import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 import com.datastax.driver.core.Cluster;
@@ -47,7 +46,7 @@ public class MainGeradorPacotes {
 				+ "navio_id, cabine_numero, cabine_tipo, cabine_disponivel,cabine_preco)" 
 				+ "VALUES ("
 				+ pacote.getNavio().getId() + ", " + pacote.getNavio().getCabines().get(cabine_id).getNumero() + ", "
-				+ pacote.getNavio().getCabines().get(cabine_id).getTipo().toString() + ", "
+				+ "'" + pacote.getNavio().getCabines().get(cabine_id).getTipo().toString() + "', "
 				+ pacote.getNavio().getCabines().get(cabine_id).isDisponivel() + ","
 				+ pacote.getNavio().getCabines().get(cabine_id).getPreco() + ");";
 		return query;
@@ -66,10 +65,14 @@ public class MainGeradorPacotes {
 	}
 
 	private static String gerarQueryPacoteInfo(Pacote pacote, Integer sequencia) {
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/YYYY");
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-YYYY");
 
-		String query = "INSERT INTO pacote_info (pacote_id, local_partida, dia_partida, menor_preco)" + "VALUES ("
-				+ sequencia + ", " + pacote.getLocalPartida() + ", " + formatter.format(pacote.getDiaPartida()) + ", "
+		String query = "INSERT INTO pacote_info ("
+				+ "pacote_id, pacote_local_partida, pacote_dia_partida, pacote_menor_preco)" 
+				+ "VALUES ("
+				+ sequencia + ", " 
+				+ "'" + pacote.getLocalPartida() + "', " 
+				+ "'" + formatter.format(pacote.getDiaPartida()) + "', "
 				+ pacote.getMenorPreco() + ");";
 		return query;
 	}
