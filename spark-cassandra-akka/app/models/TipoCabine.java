@@ -14,6 +14,7 @@ public enum TipoCabine {
   BALCONY(1700.00);
   
   private Double valor;
+  
   private TipoCabine(Double valor) {
     this.valor = valor;
   }

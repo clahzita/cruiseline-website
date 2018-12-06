@@ -6,24 +6,20 @@ import java.util.List;
 
 import models.Navio;
 import models.Pacote;
-import models.dao.ReservaDAO;
-import models.services.PacoteService;
 import play.mvc.Controller;
 import play.mvc.Result;
-import views.html.pacotes.listar;
 
+import views.html.pacotes.*;
 
 
 public class Pacotes extends Controller{
 	
-		private static PacoteService pacoteService = PacoteService.getInstance();
-		 
-		private ReservaDAO repositorioReserva = ReservaDAO.getInstance();
+		
 
 		public static Result listar() {
 			List<Pacote> pacotes = new ArrayList<>();
 			
-			pacotes.add(new Pacote(0, "NOronha", 100, new Navio(), LocalDate.now(), 5));
+			pacotes.add(new Pacote(1, "Noronha", 1400.00, new Navio(), LocalDate.now()));
 			
 			return ok(listar.render(pacotes));
 		}
@@ -34,7 +30,7 @@ public class Pacotes extends Controller{
 		}
 		
 		//Show a product edit form
-		public static Result detalhes(String ean) {
+		public static Result detalhes(Integer ean) {
 			return TODO;
 		}
 		

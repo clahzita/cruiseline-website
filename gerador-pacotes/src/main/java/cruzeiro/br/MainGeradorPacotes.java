@@ -10,7 +10,7 @@ import cruzeiro.br.models.Pacote;
 
 public class MainGeradorPacotes {
 
-	private static final int MAX = 10;
+	private static final int MAX = 20000000;//gera +- 1gb
 
 	public static void main(String[] args) {
 		// Building a cluster
@@ -21,7 +21,7 @@ public class MainGeradorPacotes {
 		GeradorPacotes geradorPacotes = new GeradorPacotes();
 
 		for (int i = 0; i < MAX; ++i) {
-			Pacote pacote = geradorPacotes.criarPacote(i);// i
+			Pacote pacote = geradorPacotes.criarPacote(i);
 
 			String queryPacoteInfo = gerarQueryPacoteInfo(pacote, i);
 			System.out.println(queryPacoteInfo);
